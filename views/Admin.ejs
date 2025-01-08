@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Add Pet</title>
+    <link rel="stylesheet" href="../static/Admin.css">
+</head>
+<body>
+
+  <% if (typeof error !== 'undefined' && error) { %>
+    <div id="errorAlert" class="alert-modal">
+      <div class="alert-content">
+        <h3>Error</h3>
+        <p id="alertMessage"><%= error %></p>
+        <button id="closeError">OK</button>
+      </div>
+    </div>
+  <% } %>
+  <% if (typeof success !== 'undefined' && success ) { %>
+    <div id="successAlert" class="alert-modal">
+      <div class="alert-content">
+        <h3>Success</h3>
+        <p id="successMessage"><%= success %></p>
+        <button id="closeSuccess">OK</button>
+      </div>
+    </div>
+  <% } %>
+
+    <nav>
+        <div class="logo">🐾 PetAdopt🐾</div>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="/dashboard">Browse & Adopt</a></li>
+        </ul>
+    </nav>
+
+    
+    <div class="container">
+        <h2>Add a New Pet</h2>
+        <form action="/pets" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="petName">Pet Name</label>
+                <input type="text" id="petName" name="petName" placeholder="Enter pet name" required>
+            </div>
+            <div class="form-group">
+                <label for="petType">Type</label>
+                <select id="petType" name="petType" required>
+                    <option value="Dog">Dog</option>
+                    <option value="Cat">Cat</option>
+                    <option value="Bird">Bird</option>
+                </select>
+            </div>
+            <div class="form-group">
+              <label for="petBreed">Pet Breed</label>
+              <input type="text" id="petBreed" name="petBreed" placeholder="Enter pet Breed" required>
+          </div>
+            <div class="form-group">
+                <label for="petAge">Age (in years)</label>
+                <input type="number" id="petAge" name="petAge" placeholder="Enter pet age" min="0" required>
+            </div>
+            <div class="form-group">
+                <label for="petDescription">Description</label>
+                <textarea id="petDescription" name="petDescription" placeholder="Write a short description about the pet" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="petImage">Upload Image</label>
+                <input type="file" id="petImage" name="petImage" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn-submit">Add Pet</button>
+        </form>
+    </div>
+
+    <script>
+        // Error Alert Logic
+        const errorAlert = document.getElementById('errorAlert');
+        const closeError = document.getElementById('closeError');
+        if (errorAlert) {
+          errorAlert.style.display = 'flex';
+          closeError.addEventListener('click', () => {
+            errorAlert.style.display = 'none';
+          });
+    
+          setTimeout(() => {
+            errorAlert.style.display = 'none';
+          }, 1000);
+        }
+        
+    
+        // Success Alert Logic
+        const successAlert = document.getElementById('successAlert');
+        const closeSuccess = document.getElementById('closeSuccess');
+        if (successAlert) {
+          successAlert.style.display = 'flex';
+          closeSuccess.addEventListener('click', () => {
+            successAlert.style.display = 'none';
+            window.location.href = '/Add'; // Redirect after closing success modal
+          });
+    
+          // Auto-close after 3 seconds
+          setTimeout(() => {
+            successAlert.style.display = 'none';
+            window.location.href = '/Add';
+          }, 2000);
+        }
+      </script>
+</body>
+</html>

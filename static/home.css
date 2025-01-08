@@ -1,0 +1,260 @@
+/* Global Styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f9f9f9;
+  color: #333;
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Navbar Styles */
+nav {
+  background: #3a4d67;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+nav .logo {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #ffcc00;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.5rem;
+}
+
+nav ul li a {
+  color: white;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  transition: background 0.3s ease;
+}
+
+nav ul li a:hover {
+  background: #ffcc00;
+  color: #333;
+}
+
+/* Hero Section Styles */
+header {
+  background-image: url('./image/dog1.jpg'); /* Update with your actual image path */
+  background-size: cover;
+  background-position: center;
+  color: white;
+  text-align: center;
+  padding: 6rem 2rem;
+  height: 500px;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.hero-content .highlight {
+  color: #ffcc00;
+}
+
+.hero-content p {
+  font-size: 1.3rem;
+  margin-bottom: 2rem;
+}
+
+.hero-content .btn {
+  background: #ffcc00;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  color: #333;
+  font-weight: bold;
+  transition: background 0.3s ease;
+}
+
+.hero-content .btn:hover {
+  background: #f1c40f;
+}
+
+/* Features Section Styles */
+#features {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  margin: 2rem 0;
+  padding: 0 2rem;
+}
+
+.feature {
+  background: white;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  flex: 1;
+  border-radius: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.feature h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.feature p {
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Call to Action Section Styles */
+.cta {
+  background: #3a4d67;
+  color: white;
+  text-align: center;
+  padding: 4rem 2rem;
+}
+
+.cta h2 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.cta .btn {
+  background: #ffcc00;
+  padding: 0.8rem 2rem;
+  border-radius: 5px;
+  font-weight: bold;
+  color: #333;
+  transition: background 0.3s ease;
+}
+
+.cta .btn:hover {
+  background: #f1c40f;
+}
+
+/* Footer Styles */
+footer {
+  background: #2c3e50;
+  color: white;
+  padding: 3rem 2rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.footer-container {
+  display: flex;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 3rem;
+}
+
+.footer-section {
+  flex: 1;
+  min-width: 250px;
+  text-align: left;
+}
+
+.footer-section h3 {
+  font-size: 1.4rem;
+  color: #f39c12;
+  margin-bottom: 1rem;
+  font-weight: bold;
+}
+
+.footer-section p {
+  font-size: 1rem;
+  color: #bdc3c7;
+  margin-bottom: 1rem;
+}
+
+.footer-section ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footer-section ul li {
+  margin-bottom: 1rem;
+}
+
+.footer-section ul li a {
+  color: #bdc3c7;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.footer-section ul li a:hover {
+  color: #f39c12;
+}
+
+.social-icons {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 1rem;
+}
+
+.social-icons a img {
+  width: 32px;
+  height: 32px;
+  transition: transform 0.3s ease;
+}
+
+.social-icons a img:hover {
+  transform: scale(1.1);
+}
+
+.footer-bottom {
+  border-top: 1px solid #34495e;
+  padding-top: 1rem;
+  margin-top: 2rem;
+  font-size: 1rem;
+  color: #7f8c8d;
+}
+
+.footer-bottom a {
+  color: #7f8c8d;
+  text-decoration: none;
+}
+
+.footer-bottom a:hover {
+  color: #f39c12;
+}
+
+
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer-section {
+    text-align: center;
+    flex: 1 1 100%;
+  }
+
+  .footer-bottom {
+    margin-top: 1.5rem;
+  }
+}

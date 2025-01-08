@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pet Adoption</title>
+  <link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+ 
+  <nav>
+    <div class="logo">PetAdopt</div>
+    <ul>
+      <li><a href="/home">Home</a></li>
+      <li>
+        <a href="#">Pets</a>
+        <div class="dropdown">
+          <a href="#" onclick="filterPets('Dog')">Dogs</a>
+          <a href="#" onclick="filterPets('Cat')">Cats</a>
+          <a href="#" onclick="filterPets('Bird')">Birds</a>
+        </div>
+      </li>
+      <li><a href="#">Contact</a></li>
+      <li><a href="/logout">Logout</a></li>
+      <% if (typeof user !== 'undefined' && user) { %>
+        <li><a href="/Add">Admin</a></li>
+      <% } %>
+      <% if (typeof user !== 'undefined' && (user.email === 'sarfarazght786@gmail.com' || user.email === 'owaisshaikh@gmail.com'|| user.email === 'alfiya@gmail.com')) { %>
+        <li><a href="/Database">Database</a></li>
+      <% } %>
+      
+     
+    </ul>
+  </nav>
+
+  <header>
+    <div class="header-content">
+      <h1>Find Your Furry Friend</h1>
+      <p>Companionship, love, and joy are just a paw away.</p>
+      <a href="#pets" class="cta">Explore Pets</a>
+    </div>
+  </header>
+
+  <div class="container" id="pets">
+    <h2 class="section-title">Available Pets</h2>
+    <div class="grid" id="petGrid">
+      
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <!-- About Section -->
+      <div class="footer-section">
+        <h3><a href="/About_Us">About Us</a></h3>
+        <p>We are dedicated to helping you find the perfect pet companion. Learn more about our story and mission.</p>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Adopt</a></li>
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+
+      <!-- Admin Registration -->
+      <div class="footer-section">
+        <h3>Become a Partner</h3>
+        <p>Join our community of trusted pet shops and sellers. Register today to showcase your pets and connect with loving homes, while we help you manage the process effortlessly.</p>
+        <a href="/Regester" class="btn">Register as a Partner</a>
+      </div>
+      
+
+      <!-- Follow Us -->
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/facebook.png" alt="facebook"/></a>
+          <a href="#"><img width="48" height="48" src="https://img.icons8.com/fluency/48/instagram-new.png" alt="instagram-new"/></a>
+          <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/twitter--v1.png" alt="twitter--v1"/></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 PetAdopt. All rights reserved.</p>
+      <p>Designed with ❤️ by <a href="#">Your Name</a></p>
+    </div>
+  </footer>
+
+
+  <script>
+  function filterPets(category) {
+  // Update the header background
+  const header = document.querySelector('header');
+  if (category === 'Dog') {
+    header.style.backgroundImage = "url('../static/image/dog1.jpg')";
+  } else if (category === 'Cat') {
+    header.style.backgroundImage = "url('../static/image/cat.jpeg')";
+  } else if (category === 'Bird') {
+    header.style.backgroundImage = "url('../static/image/bird1.jpg')";
+  } else if (category === 'Rabbit') {
+    header.style.backgroundImage = "url('../static/image/rabbit1.jpg')";
+  }
+
+  // Clear the grid before fetching new data
+  const petGrid = document.getElementById('petGrid');
+  petGrid.innerHTML = ''; // Clear all existing cards
+
+  // Fetch pets from the backend
+  fetch(`/api/pets/${category}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch pets');
+      }
+      return response.json();
+    })
+    .then(pets => {
+      // If no pets are found
+      if (pets.length === 0) {
+        petGrid.innerHTML = '<p>No pets found for this category.</p>';
+        return; // Stop further processing
+      }
+
+      // Populate the grid with the new pets
+      pets.forEach(pet => {
+        const petCard = `
+          <div class="card">
+            <img src="/uploads/${pet.petImage}" alt="${pet.petName}" loading="lazy">
+            <div class="card-content">
+              <h3>${pet.petName}</h3>
+              <p>Type: ${pet.petType}</p>
+              <p>Breed: ${pet.petBreed}</p>
+              <p>Age: ${pet.petAge} years</p>
+              <a href="#pets" class="btn">Adopt Now</a>
+            </div>
+          </div>
+        `;
+        petGrid.insertAdjacentHTML('beforeend', petCard);
+      });
+    })
+    .catch(error => {
+      console.error('Error fetching pets:', error);
+      petGrid.innerHTML = '<p>Something went wrong while fetching pets.</p>';
+    });
+}
+
+window.onload = () => filterPets('Dog');
+  </script>
+</body>
+</html>

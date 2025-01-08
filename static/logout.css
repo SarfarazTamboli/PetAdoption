@@ -1,0 +1,53 @@
+/* Global Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Body Styling */
+  body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f9;
+    color: #333;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  /* Logout Container */
+  .logout-container {
+    text-align: center;
+    background: white;
+    padding: 2rem 3rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .logout-container h1 {
+    font-size: 1.8rem;
+    color: #4e89ae;
+    margin-bottom: 1.5rem;
+  }
+  
+  .logout-container form {
+    margin-top: 1rem;
+  }
+  
+  .logout-container .btn {
+    text-decoration: none;
+    color: white;
+    background: #4e89ae;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s ease;
+  }
+  
+  .logout-container .btn:hover {
+    background: #43658b;
+  }

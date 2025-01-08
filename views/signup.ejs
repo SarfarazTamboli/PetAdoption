@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login & Signup</title>
+  <link rel="stylesheet" href="../static/losin.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Alerts -->
+    <% if (error) { %>
+      <div id="errorAlert" class="alert-modal">
+        <div class="alert-content">
+          <h3>Error</h3>
+          <p id="alertMessage"><%= error %></p>
+          <button id="closeError">OK</button>
+        </div>
+      </div>
+    <% } %>
+    <% if (success) { %>
+      <div id="successAlert" class="alert-modal">
+        <div class="alert-content">
+          <h3>Success</h3>
+          <p id="successMessage"><%= success %></p>
+          <button id="closeSuccess">OK</button>
+        </div>
+      </div>
+    <% } %>
+
+    <!-- Signup Form -->
+    <div class="form-container signup-container">
+      <form action="/signup" method="POST">
+        <h2>Sign Up</h2>
+        <input type="text" name="username" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Sign Up</button>
+        <p>Already have an account? <a href="login">Log in</a></p>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Error Alert Logic
+    const errorAlert = document.getElementById('errorAlert');
+    const closeError = document.getElementById('closeError');
+    if (errorAlert) {
+      errorAlert.style.display = 'flex';
+      closeError.addEventListener('click', () => {
+        errorAlert.style.display = 'none';
+      });
+
+      setTimeout(() => {
+        errorAlert.style.display = 'none';
+      }, 1000);
+    }
+    
+
+    // Success Alert Logic
+    const successAlert = document.getElementById('successAlert');
+    const closeSuccess = document.getElementById('closeSuccess');
+    if (successAlert) {
+      successAlert.style.display = 'flex';
+      closeSuccess.addEventListener('click', () => {
+        successAlert.style.display = 'none';
+        window.location.href = '/login'; // Redirect after closing success modal
+      });
+
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        successAlert.style.display = 'none';
+        window.location.href = '/login';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
