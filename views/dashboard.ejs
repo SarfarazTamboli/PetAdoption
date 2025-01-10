@@ -10,28 +10,35 @@
  
   <nav>
     <div class="logo">PetAdopt</div>
-    <ul>
+    <ul class="nav-links">
       <li><a href="/home">Home</a></li>
-      <li>
-        <a href="#">Pets</a>
-        <div class="dropdown">
-          <a href="#" onclick="filterPets('Dog')">Dogs</a>
-          <a href="#" onclick="filterPets('Cat')">Cats</a>
-          <a href="#" onclick="filterPets('Bird')">Birds</a>
-        </div>
-      </li>
+     <!-- Dropdown Menu Item -->
+<li class="dropdown-container">
+  <a href="#">Pets</a>
+  <div class="dropdown">
+    <a href="#" onclick="filterPets('Dog')">Dogs</a>
+    <a href="#" onclick="filterPets('Cat')">Cats</a>
+    <a href="#" onclick="filterPets('Bird')">Birds</a>
+  </div>
+</li>
+
       <li><a href="#">Contact</a></li>
       <li><a href="/logout">Logout</a></li>
       <% if (typeof user !== 'undefined' && user) { %>
         <li><a href="/Add">Admin</a></li>
       <% } %>
-      <% if (typeof user !== 'undefined' && (user.email === 'sarfarazght786@gmail.com' || user.email === 'owaisshaikh@gmail.com'|| user.email === 'alfiya@gmail.com')) { %>
+      <% if (typeof user !== 'undefined' && (user.email === 'sarfarazght786@gmail.com' || user.email === 'owaisshaikh@gmail.com' || user.email === 'alfiya@gmail.com')) { %>
         <li><a href="/Database">Database</a></li>
       <% } %>
-      
-     
     </ul>
+  
+    <div class="hamburger" id="hamburger">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
   </nav>
+  
 
   <header>
     <div class="header-content">
@@ -58,7 +65,7 @@
       </div>
 
       <!-- Quick Links -->
-      <div class="footer-section">
+      <!-- <div class="footer-section">
         <h3>Quick Links</h3>
         <ul>
           <li><a href="#">Home</a></li>
@@ -66,7 +73,7 @@
           <li><a href="#">Shop</a></li>
           <li><a href="#">Contact</a></li>
         </ul>
-      </div>
+      </div> -->
 
       <!-- Admin Registration -->
       <div class="footer-section">
@@ -95,6 +102,39 @@
 
 
   <script>
+// Select the hamburger icon and the navigation links container
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+const dropdowns = document.querySelectorAll('.dropdown');
+
+// Toggle the navigation menu on hamburger click
+hamburger.addEventListener('click', () => {
+  navLinks.classList.toggle('active'); // Toggle the visibility of nav links
+
+  // Toggle the hamburger icon animation
+  hamburger.classList.toggle('active');
+});
+
+// Close the dropdown when clicking outside of it
+document.addEventListener('click', (e) => {
+  if (!navLinks.contains(e.target) && !hamburger.contains(e.target)) {
+    // Close the nav menu if clicking outside
+    navLinks.classList.remove('active');
+    hamburger.classList.remove('active');
+  }
+});
+
+// Handle dropdown toggle on mobile
+navLinks.addEventListener('click', (e) => {
+  if (e.target.tagName === 'A' && e.target.nextElementSibling && e.target.nextElementSibling.classList.contains('dropdown')) {
+    e.preventDefault(); // Prevent default link action for the dropdown toggle
+    e.target.parentElement.classList.toggle('active');
+  }
+});
+
+
+
+
   function filterPets(category) {
   // Update the header background
   const header = document.querySelector('header');

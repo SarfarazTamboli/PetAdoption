@@ -10,7 +10,7 @@ body {
   line-height: 1.6;
   background: #f9f9f9;
   color: #333;
-  overflow-x: hidden; /* Prevent horizontal overflow */
+  overflow-x: hidden;
 }
 
 /* Navbar */
@@ -21,10 +21,8 @@ nav {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
 }
 
 nav .logo {
@@ -33,17 +31,17 @@ nav .logo {
   color: #ffcc00;
 }
 
-nav ul {
+nav .nav-links {
   list-style: none;
   display: flex;
   gap: 1.5rem;
 }
 
-nav ul li {
+nav .nav-links li {
   position: relative;
 }
 
-nav ul li a {
+nav .nav-links li a {
   text-decoration: none;
   color: white;
   font-size: 1rem;
@@ -53,7 +51,7 @@ nav ul li a {
   transition: background 0.3s ease, color 0.3s ease;
 }
 
-nav ul li a:hover {
+nav .nav-links li a:hover {
   background: #ffcc00;
   color: #333;
 }
@@ -71,7 +69,8 @@ nav ul li a:hover {
   min-width: 200px;
 }
 
-nav ul li:hover .dropdown {
+nav .nav-links li:hover .dropdown,
+nav .nav-links li.active .dropdown {
   display: flex;
 }
 
@@ -88,10 +87,74 @@ nav ul li:hover .dropdown {
   color: #333;
 }
 
+/* Hamburger Icon */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+  z-index: 100;
+  position: fixed;  /* Fix the hamburger icon to the right corner */
+  top: 1rem;
+  right: 1rem;
+}
+
+.hamburger .bar {
+  background: white;
+  height: 3px;
+  width: 25px;
+  margin: 4px 0;
+  transition: 0.4s;
+}
+
+/* Media Queries for Small Screens */
+@media (max-width: 768px) {
+  /* Ensure the menu is hidden by default */
+  nav .nav-links {
+    display: none;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;  /* Position menu below the hamburger */
+    right: 0;
+    width: 50%;
+    background: #3a4d67;
+    padding: 1rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Show the menu when active */
+  nav .nav-links.active {
+    display: flex;
+  }
+
+  nav .nav-links li {
+    text-align: center;
+    margin: 0.5rem 0;
+  }
+
+  /* Show hamburger icon on small screens */
+  .hamburger {
+    display: flex;
+  }
+
+  /* Hamburger icon transitions when clicked */
+  .hamburger.active .bar:nth-child(1) {
+    transform: rotate(-45deg) translate(-5px, 6px);
+  }
+
+  .hamburger.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+
+  .hamburger.active .bar:nth-child(3) {
+    transform: rotate(45deg) translate(-5px, -6px);
+  }
+}
+
+/* Header Section */
 header {
   background-repeat: no-repeat;
   background-position: center;
-  background-size: cover; /* Ensures the image covers the entire header */
+  background-size: cover;
   color: white;
   text-align: center;
   padding: 6rem 1rem;
@@ -141,6 +204,7 @@ header .cta:hover {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
+  justify-items: center;
 }
 
 .card {
@@ -148,7 +212,8 @@ header .cta:hover {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  margin: 7px;
+  max-width: 300px;
+  width: 100%;
 }
 
 .card:hover {
@@ -157,10 +222,12 @@ header .cta:hover {
 }
 
 .card img {
+  margin-top: 5px;
   width: 100%;
-  height: 200px; /* Set fixed height to ensure uniformity */
-  object-fit: cover; /* Ensures the image covers the entire image box without distortion */
+  height: 200px;
+  object-fit: contain;
 }
+
 .card-content {
   padding: 1rem;
   text-align: center;
@@ -191,6 +258,7 @@ header .cta:hover {
   background: #f1c40f;
 }
 
+/* Footer Section */
 footer {
   background: #2c3e50;
   color: white;
@@ -250,7 +318,7 @@ footer {
   color: #f39c12;
 }
 
-.footer-section .btn{
+.footer-section .btn {
   color: white;
   text-decoration: none;
 }
@@ -286,23 +354,4 @@ footer {
 
 .footer-bottom a:hover {
   color: #f39c12;
-}
-
-
-
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .footer-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .footer-section {
-    text-align: center;
-    flex: 1 1 100%;
-  }
-
-  .footer-bottom {
-    margin-top: 1.5rem;
-  }
 }
