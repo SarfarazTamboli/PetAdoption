@@ -1,21 +1,21 @@
 const jwt = require('jsonwebtoken');
 
 
-function authMiddleware(req, res, next) {
-  const token = req.cookies.authToken;
-  if (!token) {
-    return res.redirect('/login');
-  }
+// function authMiddleware(req, res, next) {
+//   const token = req.cookies.authToken;
+//   if (!token) {
+//     return res.redirect('/login');
+//   }
 
-  try {
-    const verified = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = verified;
-    next();
-  } catch (err) {
-    res.clearCookie('authToken');
-    res.redirect('/login');
-  }
-}
+//   try {
+//     const verified = jwt.verify(token, process.env.JWT_SECRET);
+//     req.user = verified;
+//     next();
+//   } catch (err) {
+//     res.clearCookie('authToken');
+//     res.redirect('/login');
+//   }
+// }
 
 function authMiddlewareDashboard(req, res, next) {
   const token = req.cookies.authToken;
@@ -26,7 +26,7 @@ function authMiddlewareDashboard(req, res, next) {
     res.redirect('/dashboard');
   } catch (err) {
     res.clearCookie('authToken');
-    res.redirect('home');
+    res.redirect('login');
   }
 }
 
@@ -55,4 +55,4 @@ function authAdmin(req, res, next) {
 }
 
 
-module.exports = { authMiddleware,authAdmin,authMiddlewareDashboard};
+module.exports = { authAdmin,authMiddlewareDashboard};

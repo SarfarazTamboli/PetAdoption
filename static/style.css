@@ -377,3 +377,13 @@
       font-size: 0.9rem;
     }
 
+    .footer-bottom a {
+      color: #bdc3c7;
+      text-decoration: none;
+    }
+
+    .footer-bottom a:hover {
+      color: #f39c12;
+     
+    }
+

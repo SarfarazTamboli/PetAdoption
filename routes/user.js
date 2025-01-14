@@ -25,13 +25,13 @@ const{HandelAllPetsFech}=require('../controller/user');
 const{HandelAllInformation}=require('../controller/user');
 const{HandelGetAllPassword}=require('../controller/user');
 const{HandelPassword}=require('../controller/user');
-const{authMiddleware,authAdmin,authMiddlewareDashboard}=require('../Middleware/middleware');
+const{authAdmin,authMiddlewareDashboard}=require('../Middleware/middleware');
 
 router.get('/pets/:category', HandelAllPetsFech);
 router.get("/",authMiddlewareDashboard);
 router.get("/home",HandelGetHome);
 router.get("/About_Us",HandelGetAboutus);
-router.get("/dashboard",authMiddleware,HandelGetDashboard);
+router.get("/dashboard",HandelGetDashboard);
 router.get("/signup",HandelGetSignup);
 router.get("/login",HandelGetLogin);
 router.get("/logout",HandelGetLogout);
