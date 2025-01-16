@@ -171,13 +171,14 @@ navLinks.addEventListener('click', (e) => {
       pets.forEach(pet => {
         const petCard = `
           <div class="card">
-            <img src="/uploads/${pet.petImage}" alt="${pet.petName}" loading="lazy">
+            <img src="${pet.petImage}" alt="${pet.petName}" loading="lazy">
             <div class="card-content">
               <h3>${pet.petName}</h3>
               <p>Type: ${pet.petType}</p>
               <p>Breed: ${pet.petBreed}</p>
               <p>Age: ${pet.petAge} years</p>
-              <a href="#pets" class="btn">Adopt Now</a>
+              <p>Price: ${pet.petPrice} Rs</p>
+              <a href="#pets" class="btn">Buy</a>
             </div>
           </div>
         `;

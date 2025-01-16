@@ -2,27 +2,29 @@ const {User} = require("../model/user");
 const {Dogs} = require("../model/user");
 const {Cats} = require("../model/user");
 const {Birds} = require("../model/user");
+const cloudinary = require('../app');  // Adjust the path according to your folder structure
+
+
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const sharp = require('sharp'); 
 const path = require("path");
 
-const processImage = (buffer, filename) => {
+const uploadToCloudinary = (buffer, filename) => {
   return new Promise((resolve, reject) => {
-    const filepath = path.join(__dirname, "../uploads", filename);
-
-    sharp(buffer)
-      .resize({ width: 800 }) // Resize image to 800px width
-      .jpeg({ quality: 50 }) // Compress image to 50% quality
-      .toFile(filepath, (err) => {
-        if (err) {
-          reject("Image processing failed.");
+    cloudinary.uploader.upload_stream(
+      { resource_type: 'image', public_id: filename },
+      (error, result) => {
+        if (error) {
+          reject('Image upload failed.');
         } else {
-          resolve(filename);
+          resolve(result.secure_url); // Use the secure URL from Cloudinary
         }
-      });
+      }
+    ).end(buffer);
   });
 };
+
 
 
 async function HandelGetHome(req, res)  {
@@ -162,9 +164,9 @@ async function HandelAllAdminSignup(req, res) {
 
 async function HandelAllAdminAddPet(req, res) {
   try {
-    const { petName, petType, petAge, petDescription,petBreed } = req.body;
+    const { petName, petType, petAge, petDescription,petBreed,petPrice } = req.body;
 
-    if (!petName || !petType || !petAge || !petDescription||!petBreed) {
+    if (!petName || !petType || !petAge || !petDescription||!petBreed||!petPrice) {
       return res.render("Admin", { error: "All fields are required.", success: null });
     }
 
@@ -172,17 +174,17 @@ async function HandelAllAdminAddPet(req, res) {
       return res.render("Admin", { error: "Image is required.", success: null });
     }
 
-    const filename = `${Date.now()}-${req.file.originalname}`;
+    const filename = `${req.file.originalname}`;
+    
+    // Upload the image to Cloudinary
+    const imageUrl = await uploadToCloudinary(req.file.buffer, filename);
 
-    // Call the image processing function
-    await processImage(req.file.buffer, filename);
-
-    // Check if all fields are provided
+  
 
     // Create and save the pet
     if(petType==="Dog"){
       const Dog = new Dogs({
-        petName,petType,petAge,petDescription,petBreed,petImage: filename, // Store the filename of the processed image
+        petName,petType,petAge,petDescription,petBreed,petPrice,petImage: imageUrl, // Store the filename of the processed image
       });
 
       await Dog.save();
@@ -190,7 +192,7 @@ async function HandelAllAdminAddPet(req, res) {
 
     else if(petType==="Cat"){
       const Cat = new Cats({
-        petName,petType,petAge,petDescription,petBreed,petImage: filename, // Store the filename of the processed image
+        petName,petType,petAge,petDescription,petBreed,petPrice,petImage: imageUrl, // Store the filename of the processed image
       });
 
       await Cat.save();
@@ -198,7 +200,7 @@ async function HandelAllAdminAddPet(req, res) {
 
     else if(petType==="Bird"){
       const Bird = new Birds({
-        petName,petType,petAge,petDescription,petBreed,petImage: filename, // Store the filename of the processed image
+        petName,petType,petAge,petDescription,petBreed,petPrice,petImage: imageUrl, // Store the filename of the processed image
       });
 
       await Bird.save();

@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     petAge: { type: Number, required: true },
     petBreed: { type: String, required: true },
     petDescription: { type: String },
+    petPrice: { type: Number },
     petImage: { type: String },
 });
   

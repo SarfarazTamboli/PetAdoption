@@ -3,9 +3,9 @@ const router = express.Router();
 const multer = require('multer');
 
 
-const storage = multer.memoryStorage(); // Use memory storage for buffer access
 
-const upload = multer({ storage }); // Initialize multer with the memory storage
+const storage = multer.memoryStorage(); // Store files in memory temporarily
+const upload = multer({ storage });
 
 
 
