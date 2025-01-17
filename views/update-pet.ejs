@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Pet</title>
+  <link rel="stylesheet" href="/static/update.css">
+
+</head>
+<body>
+
+  <nav>
+    <div class="logo">PetAdopt</div>
+    <ul class="nav-links">
+      <li><a href="#">Contact</a></li>
+      <li><a href="/dashboard">Browse & Buy</a></li>
+      <li><a href="/logout">Logout</a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <% if (typeof error!=='undefined'&& error) { %>
+        <div id="errorAlert" class="alert-modal">
+          <div class="alert-content">
+            <h3>Error</h3>
+            <p id="alertMessage"><%= error %></p>
+            <button id="closeError">OK</button>
+          </div>
+        </div>
+      <% } %>
+      <% if (typeof data!=='undefined'&& data) { %>
+        <div id="successAlert" class="alert-modal">
+          <div class="alert-content">
+            <h3>Success</h3>
+            <p id="successMessage"><%= data %></p>
+            <button id="closeSuccess">OK</button>
+          </div>
+        </div>
+      <% } %>
+    <h2>Edit Pet Details</h2>
+    
+    <form action="/update-pet/<%= pet._id %>" method="POST" enctype="multipart/form-data">
+      <img src="<%= pet.petImage %>" alt="<%= pet.petName %>" width="150" height="150">
+      
+      <label for="petName">Pet Name</label>
+      <input type="text" id="petName" name="petName" value="<%= pet.petName %>" required>
+      
+      <label for="petType">Pet Type</label>
+      <input type="text" id="petType" name="petType" value="<%= pet.petType %>" required>
+      
+      <label for="petBreed">Breed</label>
+      <input type="text" id="petBreed" name="petBreed" value="<%= pet.petBreed %>" required>
+      
+      <label for="petAge">Age</label>
+      <input type="number" id="petAge" name="petAge" value="<%= pet.petAge %>" required>
+      
+      <label for="petPrice">Price</label>
+      <input type="number" id="petPrice" name="petPrice" value="<%= pet.petPrice %>" required>
+      
+      <label for="petImage">Image</label>
+      <input type="file" id="petImage" name="petImage">
+
+      <button type="submit" class="btn">Update Pet</button>
+    </form>
+  </div>
+
+  <footer>
+    <!-- Footer Content -->
+  </footer>
+
+  <script>
+    // Error Alert Logic
+    const errorAlert = document.getElementById('errorAlert');
+    const closeError = document.getElementById('closeError');
+    if (errorAlert) {
+      errorAlert.style.display = 'flex';
+      closeError.addEventListener('click', () => {
+        errorAlert.style.display = 'none';
+      });
+
+      setTimeout(() => {
+        errorAlert.style.display = 'none';
+      }, 1000);
+    }
+    
+
+    // Success Alert Logic
+    const successAlert = document.getElementById('successAlert');
+    const closeSuccess = document.getElementById('closeSuccess');
+    if (successAlert) {
+      successAlert.style.display = 'flex';
+      closeSuccess.addEventListener('click', () => {
+        successAlert.style.display = 'none';
+        // window.location.href = '/login'; // Redirect after closing success modal
+      });
+
+      // Auto-close after 3 seconds
+      setTimeout(() => {
+        successAlert.style.display = 'none';
+        // window.location.href = '/login';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

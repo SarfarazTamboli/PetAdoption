@@ -35,6 +35,24 @@ async function HandelGetAboutus(req, res)  {
   res.status(200).render('aboutus')
 };
 
+async function HandelGetAllEdit(req, res)  {
+
+  try {
+    const token = req.cookies.authToken;
+
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
+    if (decodedToken.role === 'admin') {
+      return res.status(200).render('edit', { user: decodedToken});
+    }
+    
+    res.status(200).render('edit'); // Pass pets to the EJS template
+  } catch (error) {
+    console.error('Error to load Dashboard', error);
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 async function HandelGetDashboard(req, res) {
   try {
     const token = req.cookies.authToken;
@@ -74,6 +92,33 @@ async function HandelGetLogout(req, res)  {
 
 async function HandelGetAllPassword(req, res)  {
   res.status(200).render('password')
+};
+
+
+async function HandelAllGetUpdate(req, res) {
+  const petId = req.params.id;
+  const petType = req.params.petType;
+  let petModel;
+
+    // Determine which model to use based on the category
+    if (petType === 'Dog') {
+      petModel = Dogs;
+    } else if (petType === 'Cat') {
+      petModel = Cats;
+    } else if (petType === 'Bird') {
+      petModel = Birds;}
+
+      try {
+        // Fetch pet details from database using petId
+        const pet = await petModel.findById(petId); // Use await instead of callback
+        if (!pet) {
+          return res.status(404).send('Pet not found');
+        }
+        res.render('update-pet', { pet }); // Pass pet details to the update page
+      } catch (err) {
+        console.log(err);
+        res.status(500).send('Error fetching pet details.');
+      }
 };
 
 async function HandelAllUserSignup(req, res) {
@@ -266,6 +311,87 @@ async function HandelAllInformation(req, res) {
 };
 
 
+async function HandelAllDelete(req, res) {
+  const { category, id } = req.params;
+
+  try {
+    let petModel;
+
+    // Determine which model to use based on the category
+    if (category === 'Dog') {
+      petModel = Dogs;
+    } else if (category === 'Cat') {
+      petModel = Cats;
+    } else if (category === 'Bird') {
+      petModel = Birds;
+    } else {
+      return res.status(400).json({ message: 'Invalid pet category' });
+    }
+
+    // Delete the pet by its ID
+    const pet = await petModel.findByIdAndDelete(id);
+
+    if (!pet) {
+      return res.status(404).json({ message: 'Pet not found' });
+    }
+
+    res.status(200).json({ message: 'Pet deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting pet:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
+
+async function HandelAllUpdate(req, res) {
+  const petId = req.params.id;
+  const { petName, petType, petBreed, petAge, petPrice } = req.body;
+  let filename = req.file ? req.file.path : req.body.petImage;
+
+  let petModel;
+    
+    // Upload the image to Cloudinary
+    if (req.file) {
+      // Upload the image to Cloudinary if a file is uploaded
+      petImage = await uploadToCloudinary(req.file.buffer, filename);
+    } else {
+      // Use the existing petImage if no new file is uploaded
+      petImage = req.body.petImage;
+    }
+  // Determine the model based on the petType
+  if (petType === 'Dog') {
+    petModel = Dogs;
+  } else if (petType === 'Cat') {
+    petModel = Cats;
+  } else if (petType === 'Bird') {
+    petModel = Birds;
+  } else {
+    return res.status(400).send('Invalid pet type');
+  }
+
+  try {
+    // Update the pet in the database
+    const updatedPet = await petModel.findByIdAndUpdate(
+      petId,
+      { petName, petType, petBreed, petAge, petPrice, petImage },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedPet) {
+      return res.status(404).send('Pet not found');
+    }
+
+    res.render('update-pet',{data:"Data is Updated",pet:updatedPet}); // Redirect to the pet details page
+  } catch (err) {
+    console.log(err);
+    res.render('update-pet',{error:"Data is not Updated"});
+  }
+};
+
+
+
 async function HandelPassword(req, res) {
   const correctPassword = "9175127796"; // Convert the correct password to a string
   const { password } = req.body;
@@ -288,11 +414,15 @@ async function HandelPassword(req, res) {
     HandelGetAllAdminAdd,
     HandelGetAllAdminSignup,
     HandelGetAllPassword,
+    HandelGetAllEdit,
+    HandelAllGetUpdate,
     HandelAllUserSignup,
     HandelAllUserLogin,
     HandelAllAdminAddPet,
     HandelAllAdminSignup,
     HandelAllPetsFech,
     HandelAllInformation,
+    HandelAllDelete,
     HandelPassword,
-};
+    HandelAllUpdate
+}

@@ -169,27 +169,62 @@ navLinks.addEventListener('click', (e) => {
 
       // Populate the grid with the new pets
       pets.forEach(pet => {
-        const petCard = `
-          <div class="card">
-            <img src="${pet.petImage}" alt="${pet.petName}" loading="lazy">
-            <div class="card-content">
-              <h3>${pet.petName}</h3>
-              <p>Type: ${pet.petType}</p>
-              <p>Breed: ${pet.petBreed}</p>
-              <p>Age: ${pet.petAge} years</p>
-              <p>Price: ${pet.petPrice} Rs</p>
-              <a href="#pets" class="btn">Buy</a>
-            </div>
-          </div>
-        `;
-        petGrid.insertAdjacentHTML('beforeend', petCard);
-      });
+  const petCard = `
+    <div class="card" data-id="${pet._id}" data-category="${pet.petType}">
+      <img src="${pet.petImage}" alt="${pet.petName}" loading="lazy">
+      <div class="card-content">
+        <h3>${pet.petName}</h3>
+        <p>Type: ${pet.petType}</p>
+        <p>Breed: ${pet.petBreed}</p>
+        <p>Age: ${pet.petAge} years</p>
+        <p>Price: ${pet.petPrice} Rs</p>
+        <a href="/update-pet/${pet.petType}/${pet._id}" class="btn">Edit</a>
+        <button class="btn delete-btn">Delete</button>
+      </div>
+    </div>
+  `;
+  petGrid.insertAdjacentHTML('beforeend', petCard);
+});
     })
     .catch(error => {
       console.error('Error fetching pets:', error);
       petGrid.innerHTML = '<p>Something went wrong while fetching pets.</p>';
     });
 }
+
+
+document.addEventListener('click', function (e) {
+  if (e.target && e.target.classList.contains('delete-btn')) {
+    // Show a confirmation alert before deleting the pet
+    const confirmation = confirm("Are you sure you want to delete this pet?");
+    
+    if (confirmation) {
+      // Get the pet's ID and category from the data attributes
+      const petCard = e.target.closest('.card');
+      const petId = petCard.getAttribute('data-id');
+      const category = petCard.getAttribute('data-category');
+
+      // Send a DELETE request to the server to delete the pet
+      fetch(`/api/pets/${category}/${petId}`, {
+        method: 'DELETE',
+      })
+        .then(response => response.json())
+        .then(data => {
+          if (data.message === 'Pet deleted successfully') {
+            // Remove the pet card from the UI
+            petCard.remove();
+          } else {
+            alert('Failed to delete pet');
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting pet:', error);
+          alert('An error occurred while deleting the pet.');
+        });
+    }
+  }
+});
+
 
 window.onload = () => filterPets('Dog');
   </script>
