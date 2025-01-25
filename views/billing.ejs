@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buy Pet Online</title>
+    <link rel="stylesheet" href="/static/billing.css">
+</head>
+<body>
+
+    <nav>
+        <div class="logo">🐾 PetAdopt🐾</div>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="#">Contact</a></li>
+          <li><a href="/dashboard">Browse & Buy</a></li>
+        </ul>
+    </nav>
+
+
+    <div class="container">
+        <div class="form-container">
+            <h2>Complete Your Pet Purchase</h2>
+            <form action="#" method="POST">
+                <!-- Basic Information Section -->
+                <section class="section">
+                    <h3>Basic Information</h3>
+                    <div class="input-group">
+                        <label for="first-name">First Name</label>
+                        <input type="text" id="first-name" name="first-name" placeholder="John" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" name="last-name" placeholder="Doe" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="john.doe@example.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="(123) 456-7890" required>
+                    </div>
+                </section>
+
+                <!-- Shipping Address Section -->
+                <section class="section">
+                    <h3>Shipping Address</h3>
+                    <div class="input-group">
+                        <label for="address">Street Address</label>
+                        <input type="text" id="address" name="address" placeholder="1234 Elm St" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="Los Angeles" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="state">State/Province</label>
+                        <input type="text" id="state" name="state" placeholder="California" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="zip">Zip Code</label>
+                        <input type="text" id="zip" name="zip" placeholder="90001" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" name="country" placeholder="USA" required>
+                    </div>
+                </section>
+
+                <!-- Payment Information Section -->
+                <section class="section">
+                    <h3>Payment Information</h3>
+                    <div class="input-group">
+                        <label for="payment-method">Payment Method</label>
+                        <select id="payment-method" name="payment-method" required>
+                            <option value="credit-card">Credit Card</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="bank-transfer">Bank Transfer</option>
+                        </select>
+                    </div>
+
+                    <div id="credit-card-info" class="payment-details">
+                        <div class="input-group">
+                            <label for="card-number">Credit Card Number</label>
+                            <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9876 5432" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="expiration-date">Expiration Date</label>
+                            <input type="month" id="expiration-date" name="expiration-date" required>
+                        </div>
+                        <div class="input-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" name="cvv" placeholder="123" required>
+                        </div>
+                    </div>
+
+                    <div id="paypal-info" class="payment-details">
+                        <div class="input-group">
+                            <label for="paypal-email">PayPal Email</label>
+                            <input type="email" id="paypal-email" name="paypal-email" placeholder="paypal@example.com" required>
+                        </div>
+                    </div>
+                </section>
+
+                <button type="submit" class="confirm-button">Confirm Purchase</button>
+            </form>
+        </div>
+
+        <!-- Pet Details Section -->
+        <div class="pet-details">
+            <h3>Pet Details</h3>
+            <% if (typeof error !== 'undefined' && pet) { %>
+            <div class="pet-card">
+                <img src="<%= pet.petImage %>" alt="<%= pet.petName %>" class="pet-image">
+                <h4><%= pet.petName %></h4>
+                <p><strong>Age:</strong> <%= pet.petAge %> Years</p>
+                <p><strong>Breed:</strong> <%= pet.petBreed %></p>
+                <p><strong>Price:</strong> <%= pet.petPrice %> Rs</p>
+                <p><strong>Description:</strong> <%= pet.petDescription %></p>
+            </div>
+            <% } %>
+        </div>
+    </div>
+
+
+    <!-- Footer -->
+  <footer>
+    <div class="footer-container">
+      <!-- About Section -->
+      <div class="footer-section">
+        <h3><a href="/About_Us">About Us</a></h3>
+        <p>We are dedicated to helping you find the perfect pet companion. Learn more about our story and mission.</p>
+      </div>
+
+      <!-- Quick Links -->
+      <!-- <div class="footer-section">
+        <h3>Quick Links</h3>
+        <ul>
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Adopt</a></li>
+          <li><a href="#">Shop</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div> -->
+
+      <!-- Admin Registration -->
+      <div class="footer-section">
+        <h3>Become a Partner</h3>
+        <p>Join our community of trusted pet shops and sellers. Register today to showcase your pets and connect with loving homes, while we help you manage the process effortlessly.</p>
+        <a href="/Regester" class="btn">Register as a Partner</a>
+      </div>
+      
+
+      <!-- Follow Us -->
+      <div class="footer-section">
+        <h3>Follow Us</h3>
+        <div class="social-icons">
+          <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/facebook.png" alt="facebook"/></a>
+          <a href="#"><img width="48" height="48" src="https://img.icons8.com/fluency/48/instagram-new.png" alt="instagram-new"/></a>
+          <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/twitter--v1.png" alt="twitter--v1"/></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2024 PetAdopt. All rights reserved.</p>
+      <p>Designed with ❤️ by <a href="#">Your Name</a></p>
+    </div>
+  </footer>
+
+    <script>
+        document.getElementById('payment-method').addEventListener('change', function() {
+            const creditCardInfo = document.getElementById('credit-card-info');
+            const paypalInfo = document.getElementById('paypal-info');
+            
+            if (this.value === 'credit-card') {
+                creditCardInfo.style.display = 'block';
+                paypalInfo.style.display = 'none';
+            } else if (this.value === 'paypal') {
+                paypalInfo.style.display = 'block';
+                creditCardInfo.style.display = 'none';
+            } else {
+                creditCardInfo.style.display = 'none';
+                paypalInfo.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

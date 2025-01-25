@@ -178,7 +178,7 @@ navLinks.addEventListener('click', (e) => {
               <p>Breed: ${pet.petBreed}</p>
               <p>Age: ${pet.petAge} years</p>
               <p>Price: ${pet.petPrice} Rs</p>
-              <a href="#pets" class="btn">Buy</a>
+              <a href="/billing/${pet.petType}/${pet._id}"class="btn">Buy</a>
             </div>
           </div>
         `;

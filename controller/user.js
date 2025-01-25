@@ -2,6 +2,7 @@ const {User} = require("../model/user");
 const {Dogs} = require("../model/user");
 const {Cats} = require("../model/user");
 const {Birds} = require("../model/user");
+const mongoose = require('mongoose');
 const cloudinary = require('../app');  // Adjust the path according to your folder structure
 
 
@@ -89,6 +90,50 @@ async function HandelGetLogout(req, res)  {
   res.clearCookie('authToken');
   res.redirect('/');
 };
+
+async function HandelGetBillingPage(req, res)  {
+  const { petType, petId } = req.params;
+
+  let petModel;
+
+  
+
+  // Determine the model based on the petType
+  if (petType === 'Dog') {
+    petModel = Dogs;
+  } else if (petType === 'Cat') {
+    petModel = Cats;
+  } else if (petType === 'Bird') {
+    petModel = Birds;
+  } else {
+    return res.status(400).send('Invalid pet type');
+  }
+
+  try {
+    // Check if petId is valid
+    if (!mongoose.Types.ObjectId.isValid(petId)) {
+      return res.status(400).send('Invalid pet ID');
+    }
+
+    // Use findById for simplicity and automatic handling of ObjectId conversion
+    const pet = await petModel.findById(petId);
+
+
+    if (!pet) {
+      return res.status(404).send('Pet not found');
+    }
+
+    // Send pet data to the view
+    res.render('billing', { pet: pet, error: null });
+  } catch (err) {
+    console.log(err);
+    res.render('billing', { error: "Data not found", pet: null });
+  }
+};
+
+
+
+
 
 async function HandelGetAllPassword(req, res)  {
   res.status(200).render('password')
@@ -416,6 +461,7 @@ async function HandelPassword(req, res) {
     HandelGetAllPassword,
     HandelGetAllEdit,
     HandelAllGetUpdate,
+    HandelGetBillingPage,
     HandelAllUserSignup,
     HandelAllUserLogin,
     HandelAllAdminAddPet,

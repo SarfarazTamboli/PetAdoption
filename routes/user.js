@@ -19,6 +19,7 @@ const{HandelGetAllAdminSignup}=require('../controller/user');
 const{HandelGetAllAdminAdd}=require('../controller/user');
 const{HandelGetAllEdit}=require('../controller/user');
 const{HandelAllGetUpdate}=require('../controller/user');
+const{HandelGetBillingPage}=require('../controller/user');
 const{HandelAllUserSignup}=require('../controller/user');
 const{HandelAllUserLogin}=require('../controller/user');
 const{HandelAllAdminAddPet}=require('../controller/user');
@@ -44,6 +45,8 @@ router.get("/Regester",HandelGetAllAdminSignup);
 router.get("/Database",HandelAllInformation);
 router.get("/edit",HandelGetAllEdit);
 router.get("/update-pet/:petType/:id",HandelAllGetUpdate);
+router.get('/billing/:petType/:petId', HandelGetBillingPage);
+
 
 router.post("/signup", HandelAllUserSignup);
 router.post("/login", HandelAllUserLogin);
