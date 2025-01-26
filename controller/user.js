@@ -2,14 +2,13 @@ const {User} = require("../model/user");
 const {Dogs} = require("../model/user");
 const {Cats} = require("../model/user");
 const {Birds} = require("../model/user");
+const {Order} = require("../model/user");
 const mongoose = require('mongoose');
 const cloudinary = require('../app');  // Adjust the path according to your folder structure
 
 
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const sharp = require('sharp'); 
-const path = require("path");
+const jwt = require('jsonwebtoken'); 
 
 const uploadToCloudinary = (buffer, filename) => {
   return new Promise((resolve, reject) => {
@@ -449,6 +448,75 @@ async function HandelPassword(req, res) {
 }
 
 
+// POST route to handle the order confirmation
+async function HandelAllPayment(req, res) {
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    address,
+    city,
+    state,
+    country,
+    paymentMethod,
+    cardNumber,
+    expirationDate,
+    cvv,
+    pet_id,
+    petType,
+    petName,
+    petAge,
+    petBreed,
+    petPrice
+  } = req.body;
+
+  try {
+    // Find the pet by its type and ID dynamically
+    let pet;
+    if (petType === 'Dog') {
+      pet = await Dogs.findById(pet_id);
+    } else if (petType === 'Cat') {
+      pet = await Cats.findById(pet_id);
+    } else if (petType === 'Bird') {
+      pet = await Birds.findById(pet_id);
+    }
+
+    if (!pet) {
+      res.render('billing',{message:'Pet not found'});
+    }
+
+    // Simulate payment processing
+    const paymentStatus = 'Completed'; // In a real app, you would integrate with a payment gateway
+    const transactionId = '1234567890'; // Simulated transaction ID
+
+    if (firstName && lastName && email && phone && address && city && state && country && paymentMethod && pet_id && petType && petName && petAge && petBreed && petPrice) {
+      const order = new Order({
+        firstName, lastName, email, phone, address, city, state, country, paymentMethod, paymentStatus, transactionId, pet_id, petName, petType, petAge, petBreed, petPrice
+      });
+      await order.save();
+
+      // Delete the pet from the database after the order is created
+      if (petType === 'Dog') {
+        await Dogs.findByIdAndDelete(pet_id);
+      } else if (petType === 'Cat') {
+        await Cats.findByIdAndDelete(pet_id);
+      } else if (petType === 'Bird') {
+        await Birds.findByIdAndDelete(pet_id);
+      }
+    }
+
+    // Respond with success
+    res.render('billing',{message: 'Purchase successfully completed'});
+  } catch (error) {
+    console.error(error);
+    res.render('billing',{message: 'Failed to Purchase'});
+  }
+}
+
+
+
+
   module.exports ={
     HandelGetHome,
     HandelGetDashboard,
@@ -470,5 +538,6 @@ async function HandelPassword(req, res) {
     HandelAllInformation,
     HandelAllDelete,
     HandelPassword,
-    HandelAllUpdate
+    HandelAllUpdate,
+    HandelAllPayment
 }

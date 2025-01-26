@@ -30,6 +30,7 @@ const{HandelGetAllPassword}=require('../controller/user');
 const{HandelPassword}=require('../controller/user');
 const{HandelAllDelete}=require('../controller/user');
 const{HandelAllUpdate}=require('../controller/user');
+const{HandelAllPayment}=require('../controller/user');
 const{authAdmin,authMiddlewareDashboard}=require('../Middleware/middleware');
 
 router.get('/pets/:category', HandelAllPetsFech);
@@ -43,7 +44,7 @@ router.get("/logout",HandelGetLogout);
 router.get("/Add",authAdmin,HandelGetAllAdminAdd);
 router.get("/Regester",HandelGetAllAdminSignup);
 router.get("/Database",HandelAllInformation);
-router.get("/edit",HandelGetAllEdit);
+router.get("/edit",authAdmin,HandelGetAllEdit);
 router.get("/update-pet/:petType/:id",HandelAllGetUpdate);
 router.get('/billing/:petType/:petId', HandelGetBillingPage);
 
@@ -53,7 +54,7 @@ router.post("/login", HandelAllUserLogin);
 router.post('/pets', upload.single('petImage'), HandelAllAdminAddPet);
 router.post("/Regester",HandelAllAdminSignup);
 router.post('/update-pet/:id', upload.single('petImage'), HandelAllUpdate);
-
+router.post("/Payment",HandelAllPayment);
 
 router.delete("/api/pets/:category/:id",HandelAllDelete);
 

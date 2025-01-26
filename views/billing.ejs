@@ -5,8 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buy Pet Online</title>
     <link rel="stylesheet" href="/static/billing.css">
+    
+    <!-- Flatpickr CSS for calendar styling -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 </head>
 <body>
+
+   
+      <% if (typeof message !== 'undefined' && message ) { %>
+        <div id="successAlert" class="alert-modal">
+          <div class="alert-content">
+            <h3>Success</h3>
+            <p id="successMessage"><%= message %></p>
+            <button id="closeSuccess">OK</button>
+          </div>
+        </div>
+      <% } %>
 
     <nav>
         <div class="logo">🐾 PetAdopt🐾</div>
@@ -17,21 +31,20 @@
         </ul>
     </nav>
 
-
     <div class="container">
         <div class="form-container">
             <h2>Complete Your Pet Purchase</h2>
-            <form action="#" method="POST">
+            <form action="/Payment" method="POST">
                 <!-- Basic Information Section -->
                 <section class="section">
                     <h3>Basic Information</h3>
                     <div class="input-group">
                         <label for="first-name">First Name</label>
-                        <input type="text" id="first-name" name="first-name" placeholder="John" required>
+                        <input type="text" id="first-name" name="firstName" placeholder="John" required>
                     </div>
                     <div class="input-group">
                         <label for="last-name">Last Name</label>
-                        <input type="text" id="last-name" name="last-name" placeholder="Doe" required>
+                        <input type="text" id="last-name" name="lastName" placeholder="Doe" required>
                     </div>
                     <div class="input-group">
                         <label for="email">Email Address</label>
@@ -73,35 +86,39 @@
                     <h3>Payment Information</h3>
                     <div class="input-group">
                         <label for="payment-method">Payment Method</label>
-                        <select id="payment-method" name="payment-method" required>
+                        <select id="payment-method" name="paymentMethod" required>
+                            <option value="">Select Payment Method</option>
                             <option value="credit-card">Credit Card</option>
-                            <option value="paypal">PayPal</option>
-                            <option value="bank-transfer">Bank Transfer</option>
+                            <!-- Add more options as needed -->
                         </select>
                     </div>
 
                     <div id="credit-card-info" class="payment-details">
                         <div class="input-group">
                             <label for="card-number">Credit Card Number</label>
-                            <input type="text" id="card-number" name="card-number" placeholder="1234 5678 9876 5432" required>
+                            <input type="text" id="card-number" name="cardNumber" placeholder="1234 5678 9876 5432" required>
                         </div>
                         <div class="input-group">
                             <label for="expiration-date">Expiration Date</label>
-                            <input type="month" id="expiration-date" name="expiration-date" required>
+                            <!-- Flatpickr input for the expiration date -->
+                            <input type="text" id="expiration-date" name=" expirationDate " required placeholder="MM / YYYY">
                         </div>
                         <div class="input-group">
                             <label for="cvv">CVV</label>
                             <input type="text" id="cvv" name="cvv" placeholder="123" required>
                         </div>
                     </div>
-
-                    <div id="paypal-info" class="payment-details">
-                        <div class="input-group">
-                            <label for="paypal-email">PayPal Email</label>
-                            <input type="email" id="paypal-email" name="paypal-email" placeholder="paypal@example.com" required>
-                        </div>
-                    </div>
                 </section>
+
+                <!-- Hidden Pet Information -->
+                <% if (typeof error !== 'undefined' && pet) { %>
+                    <input type="hidden" id="pet-id" name="pet_id" value="<%= pet._id %>">
+                    <input type="hidden" id="pet-type" name="petType" value="<%= pet.petType %>">
+                    <input type="hidden" id="pet-Name" name="petName" value="<%= pet.petName %>">
+                    <input type="hidden" id="pet-Age" name="petAge" value="<%= pet.petAge %>">
+                    <input type="hidden" id="pet-Breed" name="petBreed" value="<%= pet.petBreed %>">
+                    <input type="hidden" id="pet-Price" name="petPrice" value="<%= pet.petPrice %>">
+                <% } %>
 
                 <button type="submit" class="confirm-button">Confirm Purchase</button>
             </form>
@@ -123,68 +140,81 @@
         </div>
     </div>
 
-
     <!-- Footer -->
-  <footer>
-    <div class="footer-container">
-      <!-- About Section -->
-      <div class="footer-section">
-        <h3><a href="/About_Us">About Us</a></h3>
-        <p>We are dedicated to helping you find the perfect pet companion. Learn more about our story and mission.</p>
-      </div>
-
-      <!-- Quick Links -->
-      <!-- <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="#">Home</a></li>
-          <li><a href="#">Adopt</a></li>
-          <li><a href="#">Shop</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul>
-      </div> -->
-
-      <!-- Admin Registration -->
-      <div class="footer-section">
-        <h3>Become a Partner</h3>
-        <p>Join our community of trusted pet shops and sellers. Register today to showcase your pets and connect with loving homes, while we help you manage the process effortlessly.</p>
-        <a href="/Regester" class="btn">Register as a Partner</a>
-      </div>
-      
-
-      <!-- Follow Us -->
-      <div class="footer-section">
-        <h3>Follow Us</h3>
-        <div class="social-icons">
-          <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/facebook.png" alt="facebook"/></a>
-          <a href="#"><img width="48" height="48" src="https://img.icons8.com/fluency/48/instagram-new.png" alt="instagram-new"/></a>
-          <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/twitter--v1.png" alt="twitter--v1"/></a>
+    <footer>
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3><a href="/About_Us" class="about">About Us</a></h3>
+                <p>We are dedicated to helping you find the perfect pet companion. Learn more about our story and mission.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Become a Partner</h3>
+                <p>Join our community of trusted pet shops and sellers. Register today to showcase your pets and connect with loving homes, while we help you manage the process effortlessly.</p>
+                <a href="/Regester" class="about">Register as a Partner</a>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/facebook.png" alt="facebook"/></a>
+                    <a href="#"><img width="48" height="48" src="https://img.icons8.com/fluency/48/instagram-new.png" alt="instagram-new"/></a>
+                    <a href="#"><img width="48" height="48" src="https://img.icons8.com/color/48/twitter--v1.png" alt="twitter--v1"/></a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 PetAdopt. All rights reserved.</p>
+            <p>Designed with ❤️ by <a href="#" class="about">Your Name</a></p>
+        </div>
+    </footer>
 
-    <div class="footer-bottom">
-      <p>&copy; 2024 PetAdopt. All rights reserved.</p>
-      <p>Designed with ❤️ by <a href="#">Your Name</a></p>
-    </div>
-  </footer>
+    <!-- Include Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
     <script>
-        document.getElementById('payment-method').addEventListener('change', function() {
+        // Initialize Flatpickr for the expiration date
+        flatpickr("#expiration-date", {
+            dateFormat: "m/Y",   // Format as MM/YYYY
+            minDate: "today",    // Prevent selecting past dates
+            disableMobile: "true" // Disable mobile version for better control
+        });
+
+        // Function to toggle visibility of the credit card fields
+        function togglePaymentFields() {
+            const paymentMethod = document.getElementById('payment-method').value;
             const creditCardInfo = document.getElementById('credit-card-info');
-            const paypalInfo = document.getElementById('paypal-info');
-            
-            if (this.value === 'credit-card') {
+
+            // Show or hide the credit card fields based on the selected payment method
+            if (paymentMethod === 'credit-card') {
                 creditCardInfo.style.display = 'block';
-                paypalInfo.style.display = 'none';
-            } else if (this.value === 'paypal') {
-                paypalInfo.style.display = 'block';
-                creditCardInfo.style.display = 'none';
             } else {
                 creditCardInfo.style.display = 'none';
-                paypalInfo.style.display = 'none';
             }
-        });
+        }
+
+        // Add event listener to toggle fields when payment method changes
+        document.getElementById('payment-method').addEventListener('change', togglePaymentFields);
+
+        // Trigger the function to set the correct initial state based on the default value
+        togglePaymentFields();
+
+        
+    
+        // Success Alert Logic
+        const successAlert = document.getElementById('successAlert');
+        const closeSuccess = document.getElementById('closeSuccess');
+        if (successAlert) {
+          successAlert.style.display = 'flex';
+          closeSuccess.addEventListener('click', () => {
+            successAlert.style.display = 'none';
+            window.location.href = '/dasboard'; // Redirect after closing success modal
+          });
+    
+          // Auto-close after 3 seconds
+          setTimeout(() => {
+            successAlert.style.display = 'none';
+            window.location.href = '/dashboard';
+          }, 2000);
+        }
     </script>
 </body>
 </html>
