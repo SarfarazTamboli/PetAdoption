@@ -6,6 +6,13 @@ const {Order} = require("../model/user");
 const mongoose = require('mongoose');
 const cloudinary = require('../app');  // Adjust the path according to your folder structure
 
+const { promises: fsPromises } = require('fs');
+const fs = require('fs'); // Add this line
+const PDFDocument = require('pdfkit');
+const nodemailer = require('nodemailer');
+const path = require('path');
+
+
 
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken'); 
@@ -486,33 +493,118 @@ async function HandelAllPayment(req, res) {
       res.render('billing',{message:'Pet not found'});
     }
 
-    // Simulate payment processing
-    const paymentStatus = 'Completed'; // In a real app, you would integrate with a payment gateway
-    const transactionId = '1234567890'; // Simulated transaction ID
+     // Simulate payment processing
+     const paymentStatus = 'Completed'; // In a real app, you would integrate with a payment gateway
+     const transactionId = '1234567890'; // Simulated transaction ID
+ 
+     if (firstName && lastName && email && phone && address && city && state && country && paymentMethod && pet_id && petType && petName && petAge && petBreed && petPrice) {
+       const order = new Order({
+         firstName, lastName, email, phone, address, city, state, country, paymentMethod, paymentStatus, transactionId, pet_id, petName, petType, petAge, petBreed, petPrice
+       });
+       await order.save();
+ 
+       // Delete the pet from the database after the order is created
+       if (petType === 'Dog') {
+         await Dogs.findByIdAndDelete(pet_id);
+       } else if (petType === 'Cat') {
+         await Cats.findByIdAndDelete(pet_id);
+       } else if (petType === 'Bird') {
+         await Birds.findByIdAndDelete(pet_id);
+       }
+     }
+ 
+     // Create a PDF document with improved design
+     const doc = new PDFDocument({ size: 'A4', margin: 50 });
+     const receiptPath = path.join(__dirname, 'receipt.pdf');
+     doc.pipe(fs.createWriteStream(receiptPath));
+ 
+     // Header Section
+     doc.fontSize(16).fillColor('#1E90FF').font('Helvetica-Bold').text('Pet Selling Store', { align: 'center' });
+     doc.fontSize(12).fillColor('#000000').text('www.PetSellingStore.com', { align: 'center' });
+     doc.text('support@PetSellingStore.com | Phone: +876-754-8402', { align: 'center' });
+     doc.moveDown();
+     doc.lineWidth(0.5).strokeColor('#000000').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+     doc.moveDown(1);
+ 
+     // Receipt Info
+     doc.fontSize(14).font('Helvetica').text(`Receipt No: #12345`);
+     doc.text(`Date: ${new Date().toLocaleDateString()}`);
+     doc.text(`Time: ${new Date().toLocaleTimeString()}`);
+     doc.moveDown(1);
+ 
+     // Customer Info
+     doc.fontSize(12).font('Helvetica').text(`Customer Name: ${firstName} ${lastName}`);
+     doc.text(`Email: ${email}`);
+     doc.moveDown(1);
+ 
+     doc.lineWidth(0.5).strokeColor('#000000').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+     doc.moveDown(1);
+ 
+     // Pet Details Section
+     doc.fontSize(12).fillColor('#1E90FF').text('Pet Details:', { underline: true });
+     doc.fontSize(12).fillColor('#000000').text(`Pet Name: ${petName}`);
+     doc.text(`Pet Type: ${petType}`);
+     doc.text(`Breed: ${petBreed}`);
+     doc.text(`Age: ${petAge} months`);
+     doc.text(`Price: ${petPrice} Rs`);
+     doc.moveDown(1);
+ 
+     doc.lineWidth(0.5).strokeColor('#000000').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+     doc.moveDown(1);
+ 
+     // Payment Details Section
+     doc.fontSize(12).fillColor('#1E90FF').text('Payment Details:', { underline: true });
+     doc.fontSize(12).fillColor('#000000').text(`Total Amount Paid: ${petPrice} Rs`);
+     doc.text(`Payment Method: ${paymentMethod}`);
+     doc.text(`Transaction ID: ${transactionId}`);
+     doc.moveDown(2);
+ 
+     // Footer
+     doc.fontSize(12).fillColor('#000000').text(`Thank you for purchasing ${petName}! We wish you and your furry friend a happy life together.`, { align: 'center' });
+     doc.text('For inquiries, contact us at support@PetSellingStore.com.', { align: 'center' });
+     doc.moveDown(2);
+ 
+     doc.lineWidth(0.5).strokeColor('#000000').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+     doc.end();
+ 
+     // Wait for the PDF document to be completely written
+     await new Promise(resolve => doc.on('end', resolve));
+ 
+     // Send email with receipt attached
+     const transporter = nodemailer.createTransport({
+      service: process.env.SMTP_SERVICE, // Using the environment variable
+      auth: {
+        user: process.env.EMAIL_USER, // Using the environment variable
+        pass: process.env.EMAIL_PASS, // Using the environment variable
+       },
+     });
+ 
+     const mailOptions = {
+       from: process.env.EMAIL_USER, 
+       to: email,
+       subject: 'Pet Purchase Receipt',
+       text: `Dear ${firstName},\n\nThank you for your purchase! Attached is your receipt.\n\nBest regards,\nPetAdopt Team`,
+       attachments: [
+         {
+           filename: 'receipt.pdf',
+           path: receiptPath,
+         },
+       ],
+     };
+ 
+     await transporter.sendMail(mailOptions);
+ 
+     // Clean up the generated PDF asynchronously
+     await fsPromises.unlink(receiptPath);
+ 
+     // Respond with success
+     res.render('billing', { message: 'Purchase successfully completed' });
+   } catch (error) {
+     console.error(error);
+     res.render('billing', { message: 'Failed to Purchase' });
+   }
+ }
 
-    if (firstName && lastName && email && phone && address && city && state && country && paymentMethod && pet_id && petType && petName && petAge && petBreed && petPrice) {
-      const order = new Order({
-        firstName, lastName, email, phone, address, city, state, country, paymentMethod, paymentStatus, transactionId, pet_id, petName, petType, petAge, petBreed, petPrice
-      });
-      await order.save();
-
-      // Delete the pet from the database after the order is created
-      if (petType === 'Dog') {
-        await Dogs.findByIdAndDelete(pet_id);
-      } else if (petType === 'Cat') {
-        await Cats.findByIdAndDelete(pet_id);
-      } else if (petType === 'Bird') {
-        await Birds.findByIdAndDelete(pet_id);
-      }
-    }
-
-    // Respond with success
-    res.render('billing',{message: 'Purchase successfully completed'});
-  } catch (error) {
-    console.error(error);
-    res.render('billing',{message: 'Failed to Purchase'});
-  }
-}
 
 
 
