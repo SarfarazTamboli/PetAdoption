@@ -20,7 +20,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     padding: 1rem 2rem;
-    position: sticky;
+    position: relative;
     top: 0;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -111,7 +111,7 @@ nav ul li a:hover {
     transition: background 0.3s ease;
 }
 
-.edit{
+.edit {
     text-decoration: none;
     background: #3a4d67;
     color: white;
@@ -123,6 +123,7 @@ nav ul li a:hover {
     cursor: pointer;
     transition: background 0.3s ease;
 }
+
 .btn-submit:hover {
     background: #ffcc00;
     color: #333;
@@ -212,9 +213,16 @@ nav ul li a:hover {
         font-size: 0.9rem;
     }
 
-    .btn-submit {
-        width: 100%;
+    /* Adjust Button for Mobile */
+    .btn-submit, .edit {
+       
         font-size: 1.2rem;
+        padding: 0.8rem;
+    }
+
+    /* Add space between buttons */
+    .btn-submit {
+        margin-bottom: 1rem; /* Space between the buttons */
     }
 }
 
@@ -235,5 +243,16 @@ nav ul li a:hover {
     .form-group textarea, 
     .form-group select {
         font-size: 0.9rem;
+    }
+
+    /* Adjust Button for Mobile */
+    .btn-submit, .edit {
+        font-size: 1rem;
+        padding: 0.8rem;
+    }
+
+    /* Add space between buttons */
+    .btn-submit {
+        margin-bottom: 1rem; /* Space between the buttons */
     }
 }

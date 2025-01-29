@@ -33,9 +33,22 @@ const uploadToCloudinary = (buffer, filename) => {
 };
 
 
+const transporter = nodemailer.createTransport({
+  service: process.env.SMTP_SERVICE, // Using the environment variable
+  auth: {
+    user: process.env.EMAIL_USER, // Using the environment variable
+    pass: process.env.EMAIL_PASS, // Using the environment variable
+   },
+ });
+
+
 
 async function HandelGetHome(req, res)  {
   res.status(200).render('home')
+};
+
+async function HandelGetContact(req, res)  {
+  res.status(200).render('contact')
 };
 
 async function HandelGetAboutus(req, res)  {
@@ -570,14 +583,6 @@ async function HandelAllPayment(req, res) {
      // Wait for the PDF document to be completely written
      await new Promise(resolve => doc.on('end', resolve));
  
-     // Send email with receipt attached
-     const transporter = nodemailer.createTransport({
-      service: process.env.SMTP_SERVICE, // Using the environment variable
-      auth: {
-        user: process.env.EMAIL_USER, // Using the environment variable
-        pass: process.env.EMAIL_PASS, // Using the environment variable
-       },
-     });
  
      const mailOptions = {
        from: process.env.EMAIL_USER, 
@@ -605,12 +610,33 @@ async function HandelAllPayment(req, res) {
    }
  }
 
+ async function HandelAllContact(req, res) {
+  const { name, email, message } = req.body;
+
+  const mailOptions = {
+      from: email, // The sender's email (from the user)
+      to:  process.env.EMAIL_USER, // The email you want to receive the message at
+      subject: `Contact Message from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+  };
+
+  transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+          console.log(error);
+          res.render('billing', { message: 'something went wrong' });
+      }
+     
+      res.render('billing', { message: 'Your message has been sent successfully!' });
+  });
+};
+
 
 
 
 
   module.exports ={
     HandelGetHome,
+    HandelGetContact,
     HandelGetDashboard,
     HandelGetAboutus,
     HandelGetSignup,
@@ -631,5 +657,6 @@ async function HandelAllPayment(req, res) {
     HandelAllDelete,
     HandelPassword,
     HandelAllUpdate,
-    HandelAllPayment
+    HandelAllPayment,
+    HandelAllContact
 }
