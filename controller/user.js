@@ -475,7 +475,6 @@ async function HandelPassword(req, res) {
   }
 }
 
-// Initialize receipt number
 let receipno = 0;
 
 async function HandelAllPayment(req, res) {
@@ -541,12 +540,24 @@ async function HandelAllPayment(req, res) {
         time: new Date().toLocaleTimeString()
       });
 
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        headless: true, // Run in headless mode (no UI)
+        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Required for cloud environments to prevent sandboxing issues
+      });
       const page = await browser.newPage();
       await page.setContent(receiptHtml);
       const pdfPath = path.join(__dirname, 'receipt.pdf');
       await page.pdf({ path: pdfPath, format: 'A4' });
       await browser.close();
+
+      // Initialize the transporter
+      const transporter = nodemailer.createTransport({
+        service: 'gmail', // Or use your mail service
+        auth: {
+          user: process.env.EMAIL_USER, // Your email username
+          pass: process.env.EMAIL_PASS  // Your email password
+        }
+      });
 
       // Send the email with the receipt attached
       const mailOptions = {
@@ -568,7 +579,7 @@ async function HandelAllPayment(req, res) {
       res.render('billing', { message: 'Incomplete data provided' });
     }
   } catch (error) {
-    console.error(error);
+    console.error('Error occurred during payment handling:', error);
     res.render('billing', { message: 'Failed to complete purchase' });
   }
 }
