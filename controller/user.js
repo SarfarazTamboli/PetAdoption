@@ -541,7 +541,8 @@ async function HandelAllPayment(req, res) {
       });
 
       const browser = await puppeteer.launch({
-        headless: true, // Run in headless mode (no UI)
+        headless: true, // Run in headless mode
+        executablePath: '/usr/bin/google-chrome-stable', // Path to the installed Chromium (on Render)
         args: ['--no-sandbox', '--disable-setuid-sandbox'] // Required for cloud environments to prevent sandboxing issues
       });
       const page = await browser.newPage();
