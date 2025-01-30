@@ -417,7 +417,8 @@ async function HandelAllDelete(req, res) {
 
 
 
-let receipno = 0;  // Define it at the top of the script
+// Initialize receipt number
+let receipno = 0;
 
 async function HandelAllPayment(req, res) {
   const {
@@ -513,6 +514,7 @@ async function HandelAllPayment(req, res) {
     res.render('billing', { message: 'Failed to complete purchase' });
   }
 }
+
 
 
  async function HandelAllContact(req, res) {
