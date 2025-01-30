@@ -417,64 +417,6 @@ async function HandelAllDelete(req, res) {
 
 
 
-async function HandelAllUpdate(req, res) {
-  const petId = req.params.id;
-  const { petName, petType, petBreed, petAge, petPrice } = req.body;
-  let filename = req.file ? req.file.path : req.body.petImage;
-
-  let petModel;
-    
-    // Upload the image to Cloudinary
-    if (req.file) {
-      // Upload the image to Cloudinary if a file is uploaded
-      petImage = await uploadToCloudinary(req.file.buffer, filename);
-    } else {
-      // Use the existing petImage if no new file is uploaded
-      petImage = req.body.petImage;
-    }
-  // Determine the model based on the petType
-  if (petType === 'Dog') {
-    petModel = Dogs;
-  } else if (petType === 'Cat') {
-    petModel = Cats;
-  } else if (petType === 'Bird') {
-    petModel = Birds;
-  } else {
-    return res.status(400).send('Invalid pet type');
-  }
-
-  try {
-    // Update the pet in the database
-    const updatedPet = await petModel.findByIdAndUpdate(
-      petId,
-      { petName, petType, petBreed, petAge, petPrice, petImage },
-      { new: true } // Return the updated document
-    );
-
-    if (!updatedPet) {
-      return res.status(404).send('Pet not found');
-    }
-
-    res.render('update-pet',{data:"Data is Updated",pet:updatedPet}); // Redirect to the pet details page
-  } catch (err) {
-    console.log(err);
-    res.render('update-pet',{error:"Data is not Updated"});
-  }
-};
-
-
-
-async function HandelPassword(req, res) {
-  const correctPassword = "9175127796"; // Convert the correct password to a string
-  const { password } = req.body;
-
-  if (password === correctPassword) {
-    res.redirect('/Databasee');
-  } else {
-    res.render('password', { error: 'Invalid password. Try again!' }); // Pass error message to the form
-  }
-}
-
 let receipno = 0;  // Define it at the top of the script
 
 async function HandelAllPayment(req, res) {
@@ -572,6 +514,26 @@ async function HandelAllPayment(req, res) {
   }
 }
 
+
+ async function HandelAllContact(req, res) {
+  const { name, email, message } = req.body;
+
+  const mailOptions = {
+      from: email, // The sender's email (from the user)
+      to:  process.env.EMAIL_USER, // The email you want to receive the message at
+      subject: `Contact Message from ${name}`,
+      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
+  };
+
+  transporter.sendMail(mailOptions, (error) => {
+      if (error) {
+          console.log(error);
+          res.render('billing', { message: 'something went wrong' });
+      }
+     
+      res.render('billing', { message: 'Your message has been sent successfully!' });
+  });
+};
 
 
 
