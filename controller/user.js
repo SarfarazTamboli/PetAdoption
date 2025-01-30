@@ -599,7 +599,7 @@ async function HandelAllPayment(req, res) {
       );
     } catch (ejsError) {
       console.error("Error generating receipt template:", ejsError);
-      return res.render("billing", { message: "Failed to generate receipt" });
+      return res.render("billing", { message: "Failed to generate receipt999" });
     }
 
     // Generate PDF
