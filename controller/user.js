@@ -475,200 +475,103 @@ async function HandelPassword(req, res) {
   }
 }
 
-let receiptNo = 0;
-let increment = 1;
+let receipno = 0;  // Define it at the top of the script
 
 async function HandelAllPayment(req, res) {
+  const {
+    firstName,
+    lastName,
+    email,
+    phone,
+    paymentMethod,
+    cardNumber,
+    expirationDate,
+    cvv,
+    pet_id,
+    petType,
+    petName,
+    petAge,
+    petBreed,
+    petPrice
+  } = req.body;
+
   try {
-    console.log("Received form data:", req.body);
-
-    const {
-      firstName,
-      lastName,
-      email,
-      phone,
-      paymentMethod,
-      cardNumber,
-      expirationDate,
-      cvv,
-      pet_id,
-      petType,
-      petName,
-      petAge,
-      petBreed,
-      petPrice,
-    } = req.body;
-
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !phone ||
-      !paymentMethod ||
-      !pet_id ||
-      !petType ||
-      !petName ||
-      !petAge ||
-      !petBreed ||
-      !petPrice
-    ) {
-      return res.render("billing", { message: "Missing required fields" });
-    }
-
-    // Find pet dynamically
+    // Find the pet based on the type and pet_id
     let pet;
-    if (petType === "Dog") {
+    if (petType === 'Dog') {
       pet = await Dogs.findById(pet_id);
-    } else if (petType === "Cat") {
+    } else if (petType === 'Cat') {
       pet = await Cats.findById(pet_id);
-    } else if (petType === "Bird") {
+    } else if (petType === 'Bird') {
       pet = await Birds.findById(pet_id);
     }
 
     if (!pet) {
-      console.error("Pet not found:", { petType, pet_id });
-      return res.render("billing", { message: "Pet not found" });
+      return res.render('billing', { message: 'Pet not found' });
     }
 
     // Simulate payment processing
-    const paymentStatus = "Completed"; // In a real app, integrate with a payment gateway
-    const transactionId = "1234567890"; // Simulated transaction ID
+    const paymentStatus = 'Completed';
+    const transactionId = '1234567890'; // Simulated transaction ID
 
-    // Save order to database
-    const order = new Order({
-      firstName,
-      lastName,
-      email,
-      phone,
-      paymentMethod,
-      paymentStatus,
-      transactionId,
-      pet_id,
-      petName,
-      petType,
-      petAge,
-      petBreed,
-      petPrice,
-    });
-
-    try {
+    // Save order details if all required data is present
+    if (firstName && lastName && email && phone && paymentMethod && pet_id && petType && petName && petAge && petBreed && petPrice) {
+      const order = new Order({
+        firstName, lastName, email, phone, paymentMethod, paymentStatus, transactionId, pet_id, petName, petType, petAge, petBreed, petPrice
+      });
       await order.save();
-      console.log("Order saved successfully.");
-    } catch (saveError) {
-      console.error("Error saving order:", saveError);
-      return res.render("billing", { message: "Failed to save order" });
-    }
 
-    // Delete the pet from the database after the order is created
-    try {
-      if (petType === "Dog") {
+      // Delete pet after order creation
+      if (petType === 'Dog') {
         await Dogs.findByIdAndDelete(pet_id);
-      } else if (petType === "Cat") {
+      } else if (petType === 'Cat') {
         await Cats.findByIdAndDelete(pet_id);
-      } else if (petType === "Bird") {
+      } else if (petType === 'Bird') {
         await Birds.findByIdAndDelete(pet_id);
       }
-      console.log("Pet deleted from database.");
-    } catch (deleteError) {
-      console.error("Error deleting pet:", deleteError);
-    }
 
-    // Increment receipt number
-    receiptNo += increment;
+      // Increment receipt number
+      receipno++;
 
-    // Generate PDF from HTML template
-    let receiptHtml;
-    try {
-      receiptHtml = await ejs.renderFile(
-        path.join(__dirname, "..", "views", "receipt.ejs"),
-        {
-          firstName,
-          lastName,
-          email,
-          petName,
-          petType,
-          petBreed,
-          petAge,
-          petPrice,
-          paymentMethod,
-          transactionId,
-          receiptNo,
-          date: new Date().toLocaleDateString(),
-          time: new Date().toLocaleTimeString(),
-        }
-      );
-    } catch (ejsError) {
-      console.error("Error generating receipt template:", ejsError);
-      return res.render("billing", { message: "Failed to generate receipt999" });
-    }
+      // Render the receipt template and generate PDF
+      const receiptHtml = await ejs.renderFile(path.join(__dirname, '..', 'views', 'receipt.ejs'), {
+        firstName, lastName, email, petName, petType, petBreed, petAge, petPrice, paymentMethod, transactionId, receipno,
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString()
+      });
 
-    // Generate PDF
-    const pdfPath = path.join(__dirname, "receipt.pdf");
-    try {
       const browser = await puppeteer.launch();
       const page = await browser.newPage();
       await page.setContent(receiptHtml);
-      await page.pdf({ path: pdfPath, format: "A4" });
+      const pdfPath = path.join(__dirname, 'receipt.pdf');
+      await page.pdf({ path: pdfPath, format: 'A4' });
       await browser.close();
-      console.log("Receipt PDF generated.");
-    } catch (pdfError) {
-      console.error("Error generating PDF:", pdfError);
-      return res.render("billing", { message: "Failed to generate receipt PDF" });
-    }
 
-    // Send email with receipt
-    const mailOptions = {
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: "Pet Purchase Receipt",
-      text: `Dear ${firstName},\n\nThank you for your purchase! Attached is your receipt.\n\nBest regards,\nPetAdopt Team`,
-      attachments: [{ filename: "receipt.pdf", path: pdfPath }],
-    };
+      // Send the email with the receipt attached
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Pet Purchase Receipt',
+        text: `Dear ${firstName},\n\nThank you for your purchase! Attached is your receipt.\n\nBest regards,\nPetAdopt Team`,
+        attachments: [{ filename: 'receipt.pdf', path: pdfPath }]
+      };
 
-    try {
       await transporter.sendMail(mailOptions);
-      console.log("Email sent successfully.");
-    } catch (emailError) {
-      console.error("Error sending email:", emailError);
-      return res.render("billing", { message: "Failed to send receipt email" });
-    }
 
-    // Delete PDF file after sending email
-    try {
+      // Clean up the generated PDF
       await fsPromises.unlink(pdfPath);
-      console.log("Temporary receipt PDF deleted.");
-    } catch (unlinkError) {
-      console.error("Error deleting receipt PDF:", unlinkError);
-    }
 
-    // Respond with success message
-    res.render("billing", { message: "Purchase successfully completed" });
+      // Respond with success
+      res.render('billing', { message: 'Purchase successfully completed' });
+    } else {
+      res.render('billing', { message: 'Incomplete data provided' });
+    }
   } catch (error) {
-    console.error("Error in HandelAllPayment:", error);
-    res.render("billing", { message: "Failed to Purchase" });
+    console.error(error);
+    res.render('billing', { message: 'Failed to complete purchase' });
   }
 }
 
-
- async function HandelAllContact(req, res) {
-  const { name, email, message } = req.body;
-
-  const mailOptions = {
-      from: email, // The sender's email (from the user)
-      to:  process.env.EMAIL_USER, // The email you want to receive the message at
-      subject: `Contact Message from ${name}`,
-      text: `Name: ${name}\nEmail: ${email}\nMessage: ${message}`
-  };
-
-  transporter.sendMail(mailOptions, (error) => {
-      if (error) {
-          console.log(error);
-          res.render('billing', { message: 'something went wrong' });
-      }
-     
-      res.render('billing', { message: 'Your message has been sent successfully!' });
-  });
-};
 
 
 
