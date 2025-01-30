@@ -240,7 +240,8 @@ async function HandelAllUserLogin(req, res) {
     const token = jwt.sign({ userId: user._id, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     // Set token in cookies with explicit expiry
-    res.cookie('authToken', token, { httpOnly: true, maxAge: 60 * 60 * 1000 }); // 1 hour
+    res.cookie('authToken', token, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 }); // 24 hours
+
     res.redirect('/dashboard');
   } catch (err) {
     console.error(err);
