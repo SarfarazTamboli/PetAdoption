@@ -7,10 +7,10 @@ const mongoose = require('mongoose');
 const cloudinary = require('../app');  // Adjust the path according to your folder structure
 
 const { promises: fsPromises } = require('fs');
+const fs = require('fs'); // Add this line
+const PDFDocument = require('pdfkit');
 const nodemailer = require('nodemailer');
 const path = require('path');
-const ejs = require('ejs');
-const puppeteer = require('puppeteer');
 
 
 
@@ -475,7 +475,6 @@ async function HandelPassword(req, res) {
   }
 }
 
-let receipno = 0;
 
 async function HandelAllPayment(req, res) {
   const {
@@ -496,7 +495,7 @@ async function HandelAllPayment(req, res) {
   } = req.body;
 
   try {
-    // Find the pet based on the type and pet_id
+    // Find the pet by its type and ID dynamically
     let pet;
     if (petType === 'Dog') {
       pet = await Dogs.findById(pet_id);
@@ -507,21 +506,21 @@ async function HandelAllPayment(req, res) {
     }
 
     if (!pet) {
-      return res.render('billing', { message: 'Pet not found' });
+      res.render('billing', { message: 'Pet not found' });
+      return;
     }
 
     // Simulate payment processing
-    const paymentStatus = 'Completed';
+    const paymentStatus = 'Completed'; // In a real app, you would integrate with a payment gateway
     const transactionId = '1234567890'; // Simulated transaction ID
 
-    // Save order details if all required data is present
     if (firstName && lastName && email && phone && paymentMethod && pet_id && petType && petName && petAge && petBreed && petPrice) {
       const order = new Order({
         firstName, lastName, email, phone, paymentMethod, paymentStatus, transactionId, pet_id, petName, petType, petAge, petBreed, petPrice
       });
       await order.save();
 
-      // Delete pet after order creation
+      // Delete the pet from the database after the order is created
       if (petType === 'Dog') {
         await Dogs.findByIdAndDelete(pet_id);
       } else if (petType === 'Cat') {
@@ -530,49 +529,81 @@ async function HandelAllPayment(req, res) {
         await Birds.findByIdAndDelete(pet_id);
       }
 
-      // Increment receipt number
-      receipno++;
+      // Create a PDF document with improved design
+      const doc = new PDFDocument({ size: 'A4', margin: 50 });
+      const receiptPath = path.join(__dirname, 'receipt.pdf');
+      doc.pipe(fs.createWriteStream(receiptPath));
 
-      // Render the receipt template and generate PDF
-      const receiptHtml = await ejs.renderFile(path.join(__dirname, '..', 'views', 'receipt.ejs'), {
-        firstName, lastName, email, petName, petType, petBreed, petAge, petPrice, paymentMethod, transactionId, receipno,
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString()
-      });
+       // Header Section
+    doc.fontSize(22).fillColor('#0073e6').font('Helvetica-Bold').text('Pet Selling Store', { align: 'center' });
+    doc.fontSize(14).fillColor('#000000').text('www.PetSellingStore.com', { align: 'center' });
+    doc.text('Email: support@PetSellingStore.com | Phone: +876-754-8402', { align: 'center' });
+    doc.moveDown();
+    doc.lineWidth(0.5).strokeColor('#ddd').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+    doc.moveDown();
 
-      const browser = await puppeteer.launch({
-        headless: true, // Run in headless mode
-        executablePath: '/usr/bin/google-chrome-stable', // Path to the installed Chromium (on Render)
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] // Required for cloud environments to prevent sandboxing issues
-      });
-      const page = await browser.newPage();
-      await page.setContent(receiptHtml);
-      const pdfPath = path.join(__dirname, 'receipt.pdf');
-      await page.pdf({ path: pdfPath, format: 'A4' });
-      await browser.close();
+    // Receipt Info
+    doc.fontSize(12).font('Helvetica').text(`Receipt No: #12345`, { align: 'left' });
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, { align: 'left' });
+    doc.text(`Time: ${new Date().toLocaleTimeString()}`, { align: 'left' });
+    doc.moveDown();
 
-      // Initialize the transporter
-      const transporter = nodemailer.createTransport({
-        service: 'gmail', // Or use your mail service
-        auth: {
-          user: process.env.EMAIL_USER, // Your email username
-          pass: process.env.EMAIL_PASS  // Your email password
-        }
-      });
+    // Customer Info Section
+    doc.fontSize(16).fillColor('#0073e6').text('Customer Details', { underline: true });
+    doc.fontSize(12).fillColor('#000000').text(`Name: ${firstName} ${lastName}`);
+    doc.text(`Email: ${email}`);
+    doc.moveDown();
 
-      // Send the email with the receipt attached
+    doc.lineWidth(0.5).strokeColor('#ddd').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+    doc.moveDown();
+
+    // Pet Details Section
+    doc.fontSize(16).fillColor('#0073e6').text('Pet Details', { underline: true });
+    doc.fontSize(12).fillColor('#000000').text(`Pet Name: ${petName}`);
+    doc.text(`Pet Type: ${petType}`);
+    doc.text(`Breed: ${petBreed}`);
+    doc.text(`Age: ${petAge} months`);
+    doc.text(`Price: ${petPrice} Rs`);
+    doc.moveDown();
+
+    doc.lineWidth(0.5).strokeColor('#ddd').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+    doc.moveDown();
+
+    // Payment Details Section
+    doc.fontSize(16).fillColor('#0073e6').text('Payment Details', { underline: true });
+    doc.fontSize(12).fillColor('#000000').text(`Total Amount Paid: ${petPrice} Rs`);
+    doc.text(`Payment Method: ${paymentMethod}`);
+    doc.text(`Transaction ID: ${transactionId}`);
+    doc.moveDown(2);
+
+    // Footer Section
+    doc.fontSize(12).fillColor('#000000').text(`Thank you for purchasing ${petName}! We wish you and your furry friend a happy life together.`, { align: 'center' });
+    doc.text('For inquiries, contact us at support@PetSellingStore.com.', { align: 'center' });
+    doc.moveDown(2);
+
+    doc.lineWidth(0.5).strokeColor('#ddd').moveTo(doc.x, doc.y).lineTo(550, doc.y).stroke(); // Horizontal line
+    doc.end();
+
+      // Wait for the PDF document to be completely written
+      await new Promise(resolve => doc.on('end', resolve));
+
       const mailOptions = {
         from: process.env.EMAIL_USER,
         to: email,
         subject: 'Pet Purchase Receipt',
         text: `Dear ${firstName},\n\nThank you for your purchase! Attached is your receipt.\n\nBest regards,\nPetAdopt Team`,
-        attachments: [{ filename: 'receipt.pdf', path: pdfPath }]
+        attachments: [
+          {
+            filename: 'receipt.pdf',
+            path: receiptPath,
+          },
+        ],
       };
 
       await transporter.sendMail(mailOptions);
 
-      // Clean up the generated PDF
-      await fsPromises.unlink(pdfPath);
+      // Clean up the generated PDF asynchronously
+      await fsPromises.unlink(receiptPath);
 
       // Respond with success
       res.render('billing', { message: 'Purchase successfully completed' });
