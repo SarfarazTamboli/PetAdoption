@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receipt</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            max-width: 600px;
+            margin: auto;
+            border: 1px solid #ddd;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            color: #0073e6;
+            font-size: 22px;
+            font-weight: bold;
+        }
+        .contact {
+            text-align: center;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .contact a {
+            text-decoration: none;
+            color: #0073e6;
+            font-weight: bold;
+        }
+        hr {
+            border: 1px solid #ddd;
+        }
+        .section-title {
+            color: #0073e6;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .info p {
+            margin: 5px 0;
+        }
+        .footer {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .footer a{
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">Pet Selling Store</div>
+    <div class="contact">
+        <p><a href="#">www.PetSellingStore.com</a></p>
+        <p>Email: PetSellingStore.com | Phone: +876-754-8402</p>
+    </div>
+    <hr>
+
+    <div class="info">
+        <p><strong>Receipt No:</strong> #<%= receipno%></p>
+        <p><strong>Date:</strong> <%= date %></p>
+        <p><strong>Time:</strong> <%= time %></p>
+    </div>
+
+    <hr>
+    <div class="section-title">Customer Details</div>
+    <div class="info">
+        <p><strong>Name:</strong> <%= firstName %> <%= lastName %></p>
+        <p><strong>Email:</strong> <%= email %></p>
+    </div>
+
+    <hr>
+    <div class="section-title">Pet Details</div>
+    <div class="info">
+        <p><strong>Pet Name:</strong> <%= petName %></p>
+        <p><strong>Type:</strong> <%= petType %></p>
+        <p><strong>Breed:</strong> <%= petBreed %></p>
+        <p><strong>Age:</strong> <%= petAge %> months</p>
+        <p><strong>Price:</strong> <%= petPrice %> Rs</p>
+    </div>
+
+    <hr>
+    <div class="section-title">Payment Details</div>
+    <div class="info">
+        <p><strong>Total Amount Paid:</strong> <%= petPrice %> Rs</p>
+        <p><strong>Payment Method:</strong> <%= paymentMethod %></p>
+        <p><strong>Transaction ID:</strong> <%= transactionId %></p>
+    </div>
+
+    <hr>
+    <div class="footer">
+        Thank you for purchasing <%= petName %>! We wish you and your furry friend a happy life together.<br>
+        For inquiries, contact us at <a href="mailto:PetSellingStore@gmail.com">PetSellingStore.com</a>.
+    </div>
+</body>
+</html>
