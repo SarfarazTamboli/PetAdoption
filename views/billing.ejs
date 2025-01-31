@@ -40,6 +40,7 @@
                     <h3>Basic Information</h3>
                     <div class="input-group">
                         <label for="first-name">First Name</label>
+
                         <input type="text" id="first-name" name="firstName" placeholder="owaise" required>
                     </div>
                     <div class="input-group">
@@ -53,11 +54,29 @@
                     <div class="input-group">
                         <label for="phone">Phone Number</label>
                         <input type="tel" id="phone" name="phone" placeholder="+91 765 456 7890" required>
+
+                        <input type="text" id="first-name" name="firstName" placeholder="John" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="last-name">Last Name</label>
+                        <input type="text" id="last-name" name="lastName" placeholder="Doe" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="john.doe@example.com" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="+91 786 765 7865" required>
+
                     </div>
                 </section>
 
                 <!-- Shipping Address Section -->
                 <!-- <section class="section">
+
+                <section class="section">
+
                     <h3>Shipping Address</h3>
                     <div class="input-group">
                         <label for="address">Street Address</label>
@@ -65,6 +84,7 @@
                     </div>
                     <div class="input-group">
                         <label for="city">City</label>
+
                         <input type="text" id="city" name="city" placeholder="Los Angeles" required>
                     </div>
                     <div class="input-group">
@@ -80,6 +100,22 @@
                         <input type="text" id="country" name="country" placeholder="USA" required>
                     </div>
                 </section> -->
+                        <!-- <input type="text" id="city" name="city" placeholder="Pune" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="state">State/Province</label>
+                        <input type="text" id="state" name="state" placeholder="Maharashtra" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="zip">Zip Code</label>
+                        <input type="text" id="zip" name="zip" placeholder="40099" required>
+                    </div>
+                    <div class="input-group">
+                        <label for="country">Country</label>
+                        <input type="text" id="country" name="country" placeholder="India" required>
+                    </div>
+                </section> -->
+
 
                 <!-- Payment Information Section -->
                 <section class="section">
@@ -207,6 +243,9 @@
           closeSuccess.addEventListener('click', () => {
             successAlert.style.display = 'none';
             window.location.href = '/dashboard'; // Redirect after closing success modal
+
+            window.location.href = '/dashboard'; // Redirect after closing success modal
+
           });
     
           // Auto-close after 3 seconds
