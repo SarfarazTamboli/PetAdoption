@@ -475,7 +475,7 @@ async function HandelPassword(req, res) {
   }
 }
 
-
+let receiptNo=0;
 // POST route to handle the order confirmation
 async function HandelAllPayment(req, res) {
   const {
@@ -547,7 +547,8 @@ async function HandelAllPayment(req, res) {
     doc.moveDown(1);
 
     // Receipt Info
-    doc.fontSize(14).font('Helvetica').text(`Receipt No: #12345`);
+    receiptNo++;
+    doc.fontSize(14).font('Helvetica').text(`Receipt No:${receiptNo}`);
     doc.text(`Date: ${new Date().toLocaleDateString()}`);
     doc.text(`Time: ${new Date().toLocaleTimeString()}`);
     doc.moveDown(1);
